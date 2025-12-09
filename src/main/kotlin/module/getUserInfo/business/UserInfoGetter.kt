@@ -13,6 +13,10 @@ class UserInfoGetter : IUserInfoGetter {
     private val gitHubApi: IGitHubApi = DependencyProvider.gitHubApi
 
     override suspend fun getUserInfo(userName: String): GitHubUser? {
+        val cachedGitHubUser = database.allGitHubUsers[userName]
+        if (cachedGitHubUser != null){
+            return cachedGitHubUser
+        }
         try {
             val getUserInformationResponse = gitHubApi.getUserInformation(userName)
             val getPublicRepositoriesListResponse = gitHubApi.getPublicRepositoriesList(userName)
